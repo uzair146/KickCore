@@ -1,0 +1,14 @@
+﻿Stat,Mean,Median,Std,Min,Max,25th Percentile,75th Percentile,90th Percentile
+Goals,6.42,5.0,5.11,0.0,20.0,2.0,10.0,13.3
+Assists,4.65,3.0,4.08,0.0,18.0,1.75,7.25,10.0
+Attempts At Goal,53.56,44.5,30.84,17.0,140.0,31.75,69.25,99.4
+Attempts On Target,18.48,14.0,13.33,2.0,59.0,8.0,23.75,32.9
+Off Target Attempts,22.56,18.0,12.39,5.0,59.0,14.75,28.25,40.0
+Attempts At Goal Conv.Rate (%),11.23,11.5,5.42,0.0,25.0,6.0,14.0,17.6
+Attempts Inside Penalty Area,32.58,26.0,20.33,6.0,88.0,16.75,44.75,59.7
+Attempts Outside Penalty Area,20.98,18.0,12.41,6.0,62.0,12.0,26.0,34.5
+Headed Attempts At Goal,8.73,7.0,5.4,2.0,27.0,5.0,12.0,15.3
+xG,5.53,4.26,4.16,1.12,17.48,2.34,7.24,10.7
+xG Efficiency,1.17,1.21,0.51,0.0,2.52,0.8,1.5,1.74
+Corners,19.81,16.5,12.03,5.0,54.0,10.0,26.0,35.8
+Possession Control (%),44.33,46.0,8.13,27.0,58.0,37.0,51.0,53.9
