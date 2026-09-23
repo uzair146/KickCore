@@ -1,2 +1,15 @@
-[client]
-showSidebarNavigation = false
+[theme]
+base = "dark"
+primaryColor = "#e8c84a"
+backgroundColor = "#060e1f"
+secondaryBackgroundColor = "#0a1932"
+textColor = "#e0e8f0"
+font = "sans serif"
+
+[server]
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+gatherUsageStats = false
