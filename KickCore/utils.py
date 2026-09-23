@@ -156,23 +156,34 @@ def inject_css():
         padding: 14px 16px !important;
     }
 
-    /* Unified Tab pills (used by all pages) */
+    /* Ensure tabs container full width */
+    .stTabs {
+        width: 100% !important;
+    }
+
+    /* Unified Tab pills (used by all pages) — Cloud-safe */
     .stTabs [data-baseweb="tab-list"] {
         background: #091529 !important;
         border-radius: 50px !important;
         padding: 5px 8px !important;
         gap: 4px !important;
         width: fit-content !important;
-        margin: 0 auto !important;
+        max-width: 100% !important;
+        margin: 0.75rem auto 0.75rem auto !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        overflow-x: auto !important;
     }
     .stTabs [data-baseweb="tab"] {
         background: transparent !important;
         border-radius: 50px !important;
         color: #a8c8e8 !important;
-        font-size: 1.25rem !important;
+        font-size: 1.1rem !important;
         font-weight: 600 !important;
-        padding: 10px 30px !important;
+        padding: 8px 20px !important;
         border: none !important;
+        white-space: nowrap !important;
         transition: all 0.2s !important;
     }
     .stTabs [aria-selected="true"] {
@@ -185,11 +196,34 @@ def inject_css():
         background: #152a55 !important;
         color: #e0e8f0 !important;
     }
-    .stTabs [data-baseweb="tab-panel"] {
+    /* Tab panel — multiple selectors for Streamlit Cloud compatibility */
+    .stTabs [data-baseweb="tab-panel"],
+    div[data-baseweb="tab-panel"],
+    .stTabs [role="tabpanel"],
+    [data-testid="stTabs"] [role="tabpanel"] {
         background: rgba(6, 16, 35, 0.97) !important;
-        border-radius: 0 0 14px 14px !important;
+        border-radius: 14px !important;
         padding: 1.5rem !important;
-        border: 1px solid rgba(232,200,74,0.15) !important;
+        border: 1px solid rgba(232,200,74,0.2) !important;
+        margin-top: 0.5rem !important;
+    }
+    /* Fallback container for tab content */
+    .tab-content-box {
+        background: rgba(6, 16, 35, 0.97) !important;
+        border-radius: 14px !important;
+        padding: 1.5rem !important;
+        border: 1px solid rgba(232,200,74,0.2) !important;
+        margin-top: 0.5rem;
+    }
+
+    /* Force dark panel behind ALL content inside tabs (Cloud fix) */
+    .stTabs [data-baseweb="tab-panel"] > div,
+    .stTabs [role="tabpanel"] > div,
+    div[data-baseweb="tab-panel"] > div {
+        background: rgba(6, 16, 35, 0.97) !important;
+        border-radius: 14px !important;
+        padding: 1.25rem 1.5rem !important;
+        border: 1px solid rgba(232,200,74,0.2) !important;
     }
 
     /* Selectbox */
