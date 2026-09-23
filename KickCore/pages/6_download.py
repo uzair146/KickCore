@@ -67,8 +67,10 @@ tab_player, tab_team = st.tabs(["⚽  Player Stats", "🌍  Team Stats"])
 
 # Player stats download tab
 with tab_player:
+    st.markdown('<div class="section-heading">Player Stats</div>', unsafe_allow_html=True)
     render_download_section(player_files, "player")
 
 # Team stats download tab
 with tab_team:
+    st.markdown('<div class="section-heading">Team Stats</div>', unsafe_allow_html=True)
     render_download_section(team_files, "team")
