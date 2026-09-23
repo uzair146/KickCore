@@ -41,19 +41,28 @@ def inject_css():
     st.markdown("""
     <style>
 
-    /* Hide Streamlit default sidebar nav */
+    /* Hide Streamlit default sidebar nav (robust for Cloud) */
     [data-testid="stSidebarNav"],
     [data-testid="stSidebarNavItems"],
-    [data-testid="stSidebarNavSeparator"] { display: none !important; }
+    [data-testid="stSidebarNavSeparator"],
+    section[data-testid="stSidebar"] nav,
+    [data-testid="stSidebarNavLink"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
 
     /* Main content block */
-    .main .block-container {
+    .main .block-container,
+    [data-testid="stMainBlockContainer"] {
         background: rgba(4, 8, 18, 0.95) !important;
         border-radius: 16px;
-        padding: 2rem 2.5rem;
+        padding: 1.5rem 2rem !important;
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(232,200,74,0.2);
+        max-width: 100% !important;
     }
 
     /* Global base font */
@@ -156,51 +165,76 @@ def inject_css():
         padding: 14px 16px !important;
     }
 
-    /* Unified Tab pills (used by all pages) */
-    .stTabs [data-baseweb="tab-list"] {
+    /* Unified Tab pills — robust for Streamlit Cloud + many tabs */
+    .stTabs [data-baseweb="tab-list"],
+    div[data-baseweb="tab-list"] {
         background: #091529 !important;
         border-radius: 50px !important;
-        padding: 5px 8px !important;
-        gap: 4px !important;
-        width: fit-content !important;
-        margin: 0 auto !important;
+        padding: 6px 10px !important;
+        gap: 6px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0.5rem auto 1rem auto !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        box-sizing: border-box !important;
     }
-    .stTabs [data-baseweb="tab"] {
+    .stTabs [data-baseweb="tab"],
+    div[data-baseweb="tab"] {
         background: transparent !important;
         border-radius: 50px !important;
         color: #a8c8e8 !important;
-        font-size: 1.25rem !important;
+        font-size: 1.05rem !important;
         font-weight: 600 !important;
-        padding: 10px 30px !important;
+        padding: 8px 18px !important;
         border: none !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
         transition: all 0.2s !important;
     }
-    .stTabs [aria-selected="true"] {
+    .stTabs [aria-selected="true"],
+    div[aria-selected="true"] {
         background: #1a3a6e !important;
         color: #e0e8f0 !important;
         border-radius: 50px !important;
         border: 1px solid rgba(168,200,232,0.35) !important;
     }
-    .stTabs [data-baseweb="tab"]:hover {
+    .stTabs [data-baseweb="tab"]:hover,
+    div[data-baseweb="tab"]:hover {
         background: #152a55 !important;
         color: #e0e8f0 !important;
     }
-    .stTabs [data-baseweb="tab-panel"] {
+    .stTabs [data-baseweb="tab-panel"],
+    div[data-baseweb="tab-panel"] {
         background: rgba(6, 16, 35, 0.97) !important;
         border-radius: 0 0 14px 14px !important;
-        padding: 1.5rem !important;
+        padding: 1.25rem 1.5rem !important;
         border: 1px solid rgba(232,200,74,0.15) !important;
+        margin-top: 0 !important;
+    }
+    /* Prevent tab content from jumping under the bar */
+    .stTabs {
+        margin-bottom: 0.5rem !important;
     }
 
     /* Selectbox */
-    .stSelectbox > div > div {
+    .stSelectbox > div > div,
+    [data-testid="stSelectbox"] > div > div {
         background: rgba(20,45,80,0.95) !important;
         border: 1px solid rgba(232,200,74,0.3) !important;
         color: #e0e8f0 !important;
-        font-size: 1.15rem !important;
+        font-size: 1.1rem !important;
     }
-    .stSelectbox label { font-size: 1.15rem !important; color: #a8c8e8 !important; }
-    div[data-baseweb="select"] > div { font-size: 1.1rem !important; }
+    .stSelectbox label,
+    [data-testid="stSelectbox"] label {
+        font-size: 1.1rem !important;
+        color: #a8c8e8 !important;
+        margin-bottom: 0.35rem !important;
+    }
+    div[data-baseweb="select"] > div { font-size: 1.05rem !important; }
 
     /* Radio */
     [data-testid="stRadio"] {
@@ -272,7 +306,11 @@ def inject_css():
     [data-testid="stMultiSelect"] > div > div {
         background: rgba(20,45,80,0.95) !important;
         border: 1px solid rgba(232,200,74,0.3) !important;
-        font-size: 1.1rem !important;
+        font-size: 1.05rem !important;
+    }
+    [data-testid="stMultiSelect"] label {
+        color: #a8c8e8 !important;
+        font-size: 1.05rem !important;
     }
 
     /* Chart / viz titles */
@@ -498,71 +536,59 @@ def get_wikipedia_image(player_name: str) -> str | None:
             continue
         if not any(t in desc or t in extract for t in football_terms):
             continue
-        img = summary.get("thumbnail", {}).get("source")
-        if img:
-            return img
+        thumb = summary.get("thumbnail", {}) or {}
+        src = thumb.get("source")
+        if src:
+            return src
+
+    # Fallback: search API
+    try:
+        query = urllib.parse.quote(f"{original_name} footballer")
+        search = fetch_json(
+            f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={query}&format=json&srlimit=5"
+        )
+        if search and "query" in search:
+            for item in search["query"].get("search", []):
+                title = item.get("title", "")
+                if any(t in title.lower() for t in bad_terms):
+                    continue
+                summary = get_summary(title)
+                if not summary:
+                    continue
+                desc = str(summary.get("description", "")).lower()
+                extract = str(summary.get("extract", "")).lower()
+                if any(t in desc or t in extract for t in football_terms):
+                    thumb = summary.get("thumbnail", {}) or {}
+                    src = thumb.get("source")
+                    if src:
+                        return src
+    except Exception:
+        pass
 
     return None
 
-# Fetch Wikipedia images for multiple players in parallel
-def fetch_images_parallel(names: list[str]) -> dict[str, str | None]:
-    """Fetch Wikipedia images for multiple players in parallel (max 4 threads)."""
-    from concurrent.futures import ThreadPoolExecutor, as_completed
-    results = {name: None for name in names}
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        futures = {executor.submit(get_wikipedia_image, name): name for name in names}
-        for future in as_completed(futures):
-            name = futures[future]
-            try:
-                results[name] = future.result()
-            except Exception:
-                results[name] = None
-    return results
-
-# Generate avatar HTML with initials when no photo exists
-def get_avatar_html(name: str, color: str = "#e8c84a", size: int = 160) -> str:
-    initials = "".join(w[0].upper() for w in name.split()[:2])
-    return f"""
-    <div style="width:{size}px;height:{int(size*1.2)}px;
-        background:linear-gradient(135deg,rgba(20,45,80,0.98),rgba(8,20,45,0.98));
-        border:2px solid {color};border-radius:12px;
-        display:flex;flex-direction:column;align-items:center;justify-content:center;
-        font-size:{int(size*0.3)}px;font-weight:900;color:{color};
-        letter-spacing:2px;font-family:sans-serif;
-        box-shadow:0 4px 20px rgba(0,0,0,0.5);">
-        {html.escape(initials)}
-        <div style="font-size:{int(size*0.08)}px;color:#a8c8e8;
-            margin-top:8px;font-weight:400;letter-spacing:1px;text-transform:uppercase">
-            No Photo
-        </div>
-    </div>"""
-
-# Shorten long names for display in metric cards
-def format_scorer_name(full_name: str) -> str:
-    """Shorten long names for display in metric cards."""
-    if not full_name or not full_name.strip():
+# Format scorer name for display (shorten very long names)
+def format_scorer_name(name: str) -> str:
+    if not name or name == "N/A":
         return "N/A"
-    parts = full_name.split()
-    if len(parts) == 1 or len(full_name) <= 14:
-        return full_name
-    return f"{parts[0]} {parts[-1][0]}."
+    name = str(name).strip()
+    if len(name) <= 18:
+        return name
+    parts = name.split()
+    if len(parts) >= 2:
+        return f"{parts[0][0]}. {' '.join(parts[1:])}"
+    return name[:16] + "…"
 
-# Load a CSV relative to BASE_DIR with error if missing
-def _csv(relative_path: str) -> pd.DataFrame:
-    """Load a CSV relative to BASE_DIR with a friendly error if missing."""
-    path = BASE_DIR / relative_path
+# CSV helper
+def _csv(rel_path: str) -> pd.DataFrame:
+    path = BASE_DIR / rel_path
     if not path.exists():
-        st.error(
-            f"⚠️ Data file not found: `{relative_path}`\n\n"
-            "Please run the data pipeline first:\n"
-            "```\npython cleaner.py\npython analysis.py\n```"
-        )
-        st.stop()
+        return pd.DataFrame()
     return pd.read_csv(path)
 
-# Load all cleaned player datasets (cached)
+# Load all player stats (cached)
 @st.cache_data(show_spinner=False)
-def load_players() -> dict[str, pd.DataFrame]:
+def load_players() -> dict:
     base = "data/cleaned/player_stats"
     return {
         "golden_boot": _csv(f"{base}/player_golden_boot.csv"),
@@ -575,9 +601,9 @@ def load_players() -> dict[str, pd.DataFrame]:
         "physical": _csv(f"{base}/player_physical.csv"),
     }
 
-# Load all cleaned team datasets (cached)
+# Load all team stats (cached)
 @st.cache_data(show_spinner=False)
-def load_teams() -> dict[str, pd.DataFrame]:
+def load_teams() -> dict:
     base = "data/cleaned/team_stats"
     return {
         "attacking": _csv(f"{base}/team_attacking.csv"),
@@ -589,13 +615,12 @@ def load_teams() -> dict[str, pd.DataFrame]:
         "physical": _csv(f"{base}/team_physical.csv"),
     }
 
-# Master player list — union across all player datasets
+# Get unique sorted player names from all datasets
 @st.cache_data(show_spinner=False)
-def get_all_player_names() -> list[str]:
-    """Master player list — union across all player datasets."""
+def get_all_player_names() -> list:
     pdata = load_players()
     names = set()
     for df in pdata.values():
         if "Name" in df.columns:
-            names.update(df["Name"].dropna().tolist())
+            names.update(df["Name"].dropna().astype(str).tolist())
     return sorted(names)
