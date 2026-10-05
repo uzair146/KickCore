@@ -1,0 +1,4 @@
+﻿Stat,Mean,Median,Std,Min,Max,25th Percentile,75th Percentile,90th Percentile
+Goals,0.24,0.0,0.77,0,10,0.0,0.0,1.0
+Assists,0.18,0.0,0.55,0,7,0.0,0.0,1.0
+Minutes Played,195.01,158.0,183.03,0,934,31.0,306.0,432.0
