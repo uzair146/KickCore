@@ -162,7 +162,7 @@ This is an independent educational/portfolio project and is **not affiliated wit
 
 ## 👤 Author
 
-**Muhammad Uzair** — BSCS student, FAST NUCES (CFD Campus), building toward a career in data analytics and data science.
+**Muhammad Uzair Hussain** — BSCS student, FAST NUCES (CFD Campus), building toward a career in data analytics and data science.
 
 - GitHub: [@uzair146](https://github.com/uzair146)
 
