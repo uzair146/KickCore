@@ -28,17 +28,6 @@ KickCore covers **1,231 players** and **48 national teams** across **15 stat cat
 | **📈 Visualizations** | Gallery of all Matplotlib and Seaborn charts |
 | **💾 Download** | Download any raw/cleaned dataset as CSV |
 
----
-
-## 📸 Chart Previews
-
-| Top Scorers | Goals vs xG |
-|:---:|:---:|
-| ![Top Scorers](charts/01_top_scorers.png) | ![Goals vs xG](charts/09_goals_vs_xg.png) |
-
-| Player Correlation Heatmap | Speed by Position |
-|:---:|:---:|
-| ![Correlation Heatmap](charts/11_player_correlation_heatmap.png) | ![Speed by Position](charts/13_speed_by_position_violin.png) |
 
 ---
 
